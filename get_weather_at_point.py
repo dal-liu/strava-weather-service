@@ -27,7 +27,7 @@ def get_weather_at_point(lat, lon):
 def get_direction(angle):
     '''Takes an angle from 0 to 360 and returns the associated cardinal direction.'''
 
-    direction = None
+    direction = ''
 
     if 22.5 < angle <= 67.5:
         direction = 'NE'
