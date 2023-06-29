@@ -18,32 +18,35 @@ def get_weather_at_point(lat, lon):
     temperature = round(observation['temperature']['value'] * (9/5) + 32)
     humidity = round(observation['relativeHumidity']['value'])
     wind_speed = round(observation['windSpeed']['value'] * 0.621371)
-    wind_direction = get_direction(observation['windDirection']['value'])
+    wind_direction = get_direction(observation['windDirection']['value'], wind_speed)
 
     # return formatted string for activity description
-    return f'{condition}, {temperature}ºF, Humidity {humidity}%, Wind {wind_speed}mph from {wind_direction}'
+    return f'{condition}, {temperature}ºF, Humidity {humidity}%, Wind {wind_speed}mph {wind_direction}'
 
 
-def get_direction(angle):
+def get_direction(angle, speed):
     '''Takes an angle from 0 to 360 and returns the associated cardinal direction.'''
 
-    direction = ''
+    if speed == 0:
+        return ''
+    
+    direction = 'from '
 
     if 22.5 < angle <= 67.5:
-        direction = 'NE'
+        direction += 'NE'
     elif 67.5 < angle <= 112.5:
-        direction = 'E'
+        direction += 'E'
     elif 112.5 < angle <= 157.5:
-        direction = 'SE'
+        direction += 'SE'
     elif 157.5 < angle <= 202.5:
-        direction = 'S'
+        direction += 'S'
     elif 202.5 < angle <= 247.5:
-        direction = 'SW'
+        direction += 'SW'
     elif 247.5 < angle <= 292.5:
-        direction = 'W'
+        direction += 'W'
     elif 292.5 < angle <= 337.5:
-        direction = 'NW'
+        direction += 'NW'
     else:
-        direction = 'N'
+        direction += 'N'
     
     return direction
