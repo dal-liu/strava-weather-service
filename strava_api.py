@@ -21,7 +21,7 @@ def get_latlng(id: int) -> list[int]:
     return response['end_latlng']
 
 
-def update_activity(id: int, data):
+def update_activity(id: int, data) -> str:
     '''Sends a PUT request and updates the activity on Strava.'''
 
     url = base_url + 'activities/' + str(id)
@@ -41,7 +41,7 @@ def request_access_token():
     '''Requests and stores a new Strava API access token.'''
 
     url = base_url + 'oauth/token'
-    path = os.environ.get('PATH')
+    path = os.environ.get('DOTENV_PATH')
     params = {
         'client_id': os.environ.get('CLIENT_ID'),
         'client_secret': os.environ.get('CLIENT_SECRET'),

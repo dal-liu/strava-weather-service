@@ -9,7 +9,7 @@ app = Flask(__name__)
 @app.route('/', methods=['POST', 'GET'])
 def webhook():
     if request.method == 'POST':
-        print(request.json)
+        print(f'\nEvent update received {request.json}')
         if request.json['aspect_type'] == 'create':
             id = request.json['object_id']
             end_latlng = strava_api.get_latlng(id)
@@ -17,12 +17,16 @@ def webhook():
                 description = get_weather_at_point(end_latlng[0], end_latlng[1])
                 put_response = strava_api.update_activity(id, description)
                 print(put_response)
+            else:
+                print('Activity did not contain coordinates')
+        else:
+            print('Event was not a create')
         return 'success', 200
+    
     elif request.method == 'GET':
         challenge = {'hub.challenge': request.args.get('hub.challenge')}
-        print(challenge)
+        print(f'\nChallenge received, sending {challenge}')
         return json.dumps(challenge), 200
+    
     else:
         return '', 200
-
-app.run()
