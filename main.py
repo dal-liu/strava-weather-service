@@ -1,4 +1,4 @@
-from get_weather_at_point import get_weather_at_point
+from noaa_weather import get_weather_at_point
 
 
 if __name__ == '__main__':
