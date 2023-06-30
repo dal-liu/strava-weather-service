@@ -1,6 +1,11 @@
 from noaa_weather import get_weather_at_point
+import strava
+import json
 
 
 if __name__ == '__main__':
-    # print(get_weather_at_point(40.7813, -73.9665)) # New York, NY
-    print(get_weather_at_point(41.8826, -87.6233)) # Chicago, IL
+    f = open('./sample.json')    
+    data = json.load(f)
+    print(data['end_latlng'])
+    latlng = [round(x, 4) for x in data['end_latlng']]
+    print(get_weather_at_point(latlng[0], latlng[1]))

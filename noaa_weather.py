@@ -1,34 +1,54 @@
-import requests_json
+import requests
 
 
-def get_weather_at_point(lat, lon):
+def get_weather_at_point(lat: int, lon: int) -> str:
     '''Takes latitude and longitude and returns a string with a brief description of the weather at that location.'''
 
     base_url = 'https://api.weather.gov/'
 
     # get the grid endpoint and nearest stations to the coordinate
-    points = requests_json.get(base_url + f'points/{lat},{lon}')['properties']['observationStations']
+    points = requests.get(base_url + f'points/{lat},{lon}').json()['properties']['observationStations']
     # get the list of nearest stations, sorted by proximity
-    stations = requests_json.get(points)['observationStations']
+    stations = requests.get(points).json()['observationStations']
     # get the latest observation at the nearest station
-    observation = requests_json.get(stations[0] + '/observations/latest')['properties']
+    observation = requests.get(stations[0] + '/observations/latest').json()['properties']
+
+    print('Observation at ' + observation['station'] + ' as of ' + observation['timestamp'])
 
     # extract relevant information from response
-    condition = observation['textDescription']
+    condition = get_condition(observation['textDescription'])
     temperature = round(observation['temperature']['value'] * (9/5) + 32)
     humidity = round(observation['relativeHumidity']['value'])
-    wind_speed = round(observation['windSpeed']['value'] * 0.621371)
-    wind_direction = get_direction(observation['windDirection']['value'], wind_speed)
+    wind_speed = get_wind_speed(observation['windSpeed']['value'])
+    wind_direction = get_wind_direction(observation['windDirection']['value'], wind_speed)
 
     # return formatted string for activity description
     return f'{condition}, {temperature}ºF, Humidity {humidity}%, Wind {wind_speed}mph {wind_direction}'
 
 
-def get_direction(angle, speed):
+def get_condition(condition) -> str:
+    '''If condition is N/A, then returns an empty string.'''
+    if not condition:
+        return ''
+    
+    return condition
+
+
+def get_wind_speed(wind_speed) -> int:
+    '''Returns wind speed in mph. If wind is unavailable, returns 0.'''
+    if not wind_speed:
+        return 0
+    
+    return round(wind_speed * 0.621371)
+
+
+def get_wind_direction(angle, speed) -> str:
     '''Takes an angle from 0 to 360 and returns the associated cardinal direction.'''
 
-    if speed == 0:
+    if not speed:
         return ''
+    if not angle:
+        return 'from N'
     
     direction = 'from '
 
