@@ -6,6 +6,9 @@ def get_weather_at_point(lat: int, lon: int) -> str:
 
     base_url = 'https://api.weather.gov/'
 
+    # round lat and lon to 4 decimal digits
+    lat, lon = round(lat, 4), round(lon, 4)
+
     # get the grid endpoint and nearest stations to the coordinate
     points = requests.get(base_url + f'points/{lat},{lon}').json()['properties']['observationStations']
     # get the list of nearest stations, sorted by proximity
@@ -23,23 +26,19 @@ def get_weather_at_point(lat: int, lon: int) -> str:
     wind_direction = get_wind_direction(observation['windDirection']['value'], wind_speed)
 
     # return formatted string for activity description
-    return f'{condition}, {temperature}ºF, Humidity {humidity}%, Wind {wind_speed}mph {wind_direction}'
+    return f'{condition}{temperature}ºF, Humidity {humidity}%, Wind {wind_speed}mph {wind_direction}'
 
 
 def get_condition(condition) -> str:
     '''If condition is N/A, then returns an empty string.'''
-    if not condition:
-        return ''
     
-    return condition
+    return condition + ', ' if condition else ''
 
 
 def get_wind_speed(wind_speed) -> int:
     '''Returns wind speed in mph. If wind is unavailable, returns 0.'''
-    if not wind_speed:
-        return 0
     
-    return round(wind_speed * 0.621371)
+    return round(wind_speed * 0.621371) if wind_speed else 0
 
 
 def get_wind_direction(angle, speed) -> str:

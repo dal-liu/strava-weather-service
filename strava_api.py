@@ -7,17 +7,18 @@ dotenv.load_dotenv()
 base_url = 'https://www.strava.com/api/v3/'
 
 
-def get_lat_lon(id: int) -> list[int]:
+def get_latlng(id: int) -> list[int]:
     '''Returns the ending latitude and longitude of an activity.'''
 
     url = base_url + 'activities/' + str(id)
-    headers = {'Authorization': 'Bearer ' + os.environ.get('ACCESS_TOKEN')}
-
+    
+    # if access token is expired, get a new one
     if int(os.environ.get('EXPIRES_AT')) < time():
         request_access_token()
+    headers = {'Authorization': 'Bearer ' + os.environ.get('ACCESS_TOKEN')}
 
     response = requests.get(url, headers=headers).json()
-    return [round(n, 4) for n in response['end_latlng']]
+    return response['end_latlng']
 
 
 def update_activity(id: int, data):
@@ -25,13 +26,15 @@ def update_activity(id: int, data):
 
     url = base_url + 'activities/' + str(id)
     payload = {"description": data}
-    headers = {'Authorization': 'Bearer ' + os.environ.get('ACCESS_TOKEN')}
 
+    # if access token is expired, get a new one
     if int(os.environ.get('EXPIRES_AT')) < time():
         request_access_token()
+    headers = {'Authorization': 'Bearer ' + os.environ.get('ACCESS_TOKEN')}
 
     response = requests.put(url, payload, headers=headers)
-    return response.status_code
+    # return status and reason
+    return str(response.status_code) + ' ' + response.reason
 
 
 def request_access_token():

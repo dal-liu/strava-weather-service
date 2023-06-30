@@ -1,5 +1,5 @@
 import json
-import strava
+import strava_api
 from flask import Flask, request
 from noaa_weather import get_weather_at_point
 
@@ -12,10 +12,10 @@ def webhook():
         print(request.json)
         if request.json['aspect_type'] == 'create':
             id = request.json['object_id']
-            end_latlon = strava.get_lat_lon(id)
-            if len(end_latlon) == 2:
-                description = get_weather_at_point(end_latlon[0], end_latlon[1])
-                put_response = strava.update_activity(id, description)
+            end_latlng = strava_api.get_latlng(id)
+            if len(end_latlng) == 2:
+                description = get_weather_at_point(end_latlng[0], end_latlng[1])
+                put_response = strava_api.update_activity(id, description)
                 print(put_response)
         return 'success', 200
     elif request.method == 'GET':
