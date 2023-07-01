@@ -13,4 +13,7 @@ if len(sys.argv) == 2:
     }
 
     response = requests.delete(url, params=params)
-    print('Subscription terminated')
+    if response.status_code == 204:
+        print('Subscription terminated')
+    else:
+        print(f'Error deleting subscription: {response.status_code} {response.content}')

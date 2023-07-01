@@ -52,3 +52,4 @@ def request_access_token():
     response = requests.post(url, params=params).json()
     dotenv.set_key(path, 'ACCESS_TOKEN', response['access_token'])
     dotenv.set_key(path, 'EXPIRES_AT', str(response['expires_at']))
+    print('Requested new access token')

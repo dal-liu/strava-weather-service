@@ -16,8 +16,6 @@ def get_weather_at_point(lat: int, lon: int) -> str:
     # get the latest observation at the nearest station
     observation = requests.get(stations[0] + '/observations/latest').json()['properties']
 
-    print('Got observation at ' + observation['station'] + ' as of ' + observation['timestamp'])
-
     # extract relevant information from response
     condition = get_condition(observation['textDescription'])
     temperature = round(observation['temperature']['value'] * (9/5) + 32)
