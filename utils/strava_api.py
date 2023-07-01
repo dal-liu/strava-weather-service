@@ -17,8 +17,8 @@ def get_latlng(id: int) -> list[int]:
         request_access_token()
     headers = {'Authorization': 'Bearer ' + os.environ.get('ACCESS_TOKEN')}
 
-    response = requests.get(url, headers=headers).json()
-    return response['end_latlng']
+    get_response = requests.get(url, headers=headers).json()
+    return get_response.get('end_latlng', [])
 
 
 def update_activity(id: int, data) -> str:
@@ -32,9 +32,9 @@ def update_activity(id: int, data) -> str:
         request_access_token()
     headers = {'Authorization': 'Bearer ' + os.environ.get('ACCESS_TOKEN')}
 
-    response = requests.put(url, payload, headers=headers)
+    put_response = requests.put(url, payload, headers=headers)
     # return status and reason
-    return str(response.status_code) + ' ' + response.reason
+    return str(put_response.status_code) + ' ' + put_response.reason
 
 
 def request_access_token():
@@ -49,7 +49,7 @@ def request_access_token():
         'refresh_token': os.environ.get('REFRESH_TOKEN')
     }
 
-    response = requests.post(url, params=params).json()
-    dotenv.set_key(path, 'ACCESS_TOKEN', response['access_token'])
-    dotenv.set_key(path, 'EXPIRES_AT', str(response['expires_at']))
+    post_response = requests.post(url, params=params).json()
+    dotenv.set_key(path, 'ACCESS_TOKEN', post_response['access_token'])
+    dotenv.set_key(path, 'EXPIRES_AT', str(post_response['expires_at']))
     print('Requested new access token')

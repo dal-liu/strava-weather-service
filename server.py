@@ -16,8 +16,8 @@ def webhook():
             if len(end_latlng) == 2:
                 description = get_weather_at_point(end_latlng[0], end_latlng[1])
                 print(f'Updating activity with {description}...')
-                put_response = strava_api.update_activity(id, description)
-                print(put_response)
+                response = strava_api.update_activity(id, description)
+                print(response)
             else:
                 print('Activity did not contain coordinates, did not update activity')
         else:
