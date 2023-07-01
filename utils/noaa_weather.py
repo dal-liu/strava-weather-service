@@ -10,9 +10,12 @@ def get_weather_at_point(lat: int, lon: int) -> str:
     lat, lon = round(lat, 4), round(lon, 4)
 
     # get the grid endpoint and nearest stations to the coordinate
-    points = requests.get(base_url + f'points/{lat},{lon}').json()['properties']['observationStations']
+    # if the point is outside of the US, then return an empty string
+    points = requests.get(base_url + f'points/{lat},{lon}')
+    if points.status_code == 404:
+        return ''
     # get the list of nearest stations, sorted by proximity
-    stations = requests.get(points).json()['observationStations']
+    stations = requests.get(points.json()['properties']['observationStations']).json()['observationStations']
     # get the latest observation at the nearest station
     observation = requests.get(stations[0] + '/observations/latest').json()['properties']
 
