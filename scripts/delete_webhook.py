@@ -12,8 +12,9 @@ if len(sys.argv) == 2:
         'client_secret': os.environ.get('CLIENT_SECRET')
     }
 
+    print('Deleting webhook subscription...')
     response = requests.delete(url, params=params)
     if response.status_code == 204:
-        print('Subscription terminated')
+        print('Subscription deleted')
     else:
         print(f'Error deleting subscription: {response.status_code} {response.content}')

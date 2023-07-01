@@ -19,14 +19,14 @@ def webhook():
                 put_response = strava_api.update_activity(id, description)
                 print(put_response)
             else:
-                print('Activity did not contain coordinates')
+                print('Activity did not contain coordinates, did not update activity')
         else:
-            print('Event was not a create')
+            print('Event was not a create, did not update activity')
         return 'success', 200
     
     elif request.method == 'GET':
         challenge = {'hub.challenge': request.args.get('hub.challenge')}
-        print(f'\nChallenge received, sending {challenge}')
+        print(f'\nChallenge received, sending {challenge}...')
         return json.dumps(challenge), 200
     
     else:

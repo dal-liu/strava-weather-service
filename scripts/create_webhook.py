@@ -14,5 +14,6 @@ if len(sys.argv) == 2:
         'verify_token': 'STRAVA'
     }
 
+    print('Creating webhook subscription...')
     response = requests.post(url, params=params)
     print(f'Subscription ID: {response.json()["id"]}')
