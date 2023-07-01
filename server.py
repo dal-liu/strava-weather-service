@@ -14,8 +14,8 @@ def webhook():
             id = request.json['object_id']
             end_latlng = strava_api.get_latlng(id)
             if len(end_latlng) == 2:
-                print('Updating activity...')
                 description = get_weather_at_point(end_latlng[0], end_latlng[1])
+                print(f'Updating activity with {description}...')
                 put_response = strava_api.update_activity(id, description)
                 print(put_response)
             else:
