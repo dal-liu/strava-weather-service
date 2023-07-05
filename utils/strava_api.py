@@ -49,7 +49,8 @@ def request_access_token():
         'refresh_token': os.environ.get('REFRESH_TOKEN')
     }
 
+    print('Requesting new access token...')
     post_response = requests.post(url, params=params).json()
     dotenv.set_key(path, 'ACCESS_TOKEN', post_response['access_token'])
     dotenv.set_key(path, 'EXPIRES_AT', str(post_response['expires_at']))
-    print('Requested new access token')
+    return

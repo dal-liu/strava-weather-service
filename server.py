@@ -1,9 +1,16 @@
 import json
 import utils.strava_api as strava_api
 from flask import Flask, request
+from pyngrok import ngrok
 from utils.noaa_weather import get_weather_at_point
 
 app = Flask(__name__)
+
+
+with app.app_context():
+    print('Creating ngrok tunnel...')
+    public_url = ngrok.connect(5000).public_url
+    print(f'Callback URL: {public_url}')
 
 
 @app.route('/', methods=['POST', 'GET'])
@@ -19,7 +26,7 @@ def webhook():
                 response = strava_api.update_activity(id, description)
                 print(response)
             else:
-                print('Activity did not contain coordinates, did not update activity')
+                print(f'Activity did not contain coordinates, instead got {end_latlng}, did not update activity')
         else:
             print('Event was not a create, did not update activity')
         return 'success', 200
