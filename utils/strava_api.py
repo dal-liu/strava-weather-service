@@ -1,13 +1,14 @@
 import dotenv
 import os
 import requests
+from polyline import decode
 from time import time
 
 dotenv.load_dotenv()
 base_url = 'https://www.strava.com/api/v3/'
 
 
-def get_latlng(id: int) -> list[int]:
+def get_latlng(id: int) -> tuple[int]:
     '''Returns the ending latitude and longitude of an activity.'''
 
     url = base_url + 'activities/' + str(id)
@@ -18,7 +19,12 @@ def get_latlng(id: int) -> list[int]:
     headers = {'Authorization': 'Bearer ' + os.environ.get('ACCESS_TOKEN')}
 
     get_response = requests.get(url, headers=headers).json()
-    return get_response.get('end_latlng', [])
+    activity_map = get_response.get('map')
+    if not activity_map:
+        return ()
+    line = activity_map['polyline']
+    decoded = decode(line)
+    return decoded[-1] if decoded else ()
 
 
 def update_activity(id: int, data) -> str:

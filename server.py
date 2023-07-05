@@ -26,7 +26,7 @@ def webhook():
                 response = strava_api.update_activity(id, description)
                 print(response)
             else:
-                print(f'Activity did not contain coordinates, instead got {end_latlng}, did not update activity')
+                print('Activity did not contain map, did not update activity')
         else:
             print('Event was not a create, did not update activity')
         return 'success', 200
