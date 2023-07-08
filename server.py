@@ -1,19 +1,28 @@
 import json
 import utils.strava_api as strava_api
-from flask import Flask, request
+from flask import Flask, request, render_template
 from pyngrok import ngrok
 from utils.noaa_weather import get_weather_at_point
 
 app = Flask(__name__)
 
 
-with app.app_context():
-    print('Creating ngrok tunnel...')
-    public_url = ngrok.connect(5000).public_url
-    print(f'Callback URL: {public_url}')
+if not app.debug:
+    with app.app_context():
+        print('Creating ngrok tunnel...')
+        public_url = ngrok.connect(5000).public_url
+        print(f'Callback URL: {public_url}')
 
 
-@app.route('/', methods=['POST', 'GET'])
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    if request.method == 'POST':
+        input_value = request.form['input_text']
+        print(input_value)
+    return render_template('./index.html')
+
+
+@app.route('/webhook', methods=['POST', 'GET'])
 def webhook():
     if request.method == 'POST':
         print(f'\nEvent update received {request.json}')

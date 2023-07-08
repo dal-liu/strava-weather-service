@@ -21,10 +21,14 @@ def get_latlng(id: int) -> tuple[int]:
     get_response = requests.get(url, headers=headers).json()
     activity_map = get_response.get('map')
     if not activity_map:
+        print(get_response)
         return ()
     line = activity_map['polyline']
     decoded = decode(line)
-    return decoded[-1] if decoded else ()
+    if not decoded:
+        print(activity_map)
+        return ()
+    return decoded[-1]
 
 
 def update_activity(id: int, data) -> str:
