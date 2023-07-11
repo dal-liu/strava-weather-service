@@ -15,18 +15,19 @@ def get_latlng(id: int) -> tuple[int]:
     
     # if access token is expired, get a new one
     if int(os.environ.get('EXPIRES_AT')) < time():
-        request_access_token()
+        _request_access_token()
     headers = {'Authorization': 'Bearer ' + os.environ.get('ACCESS_TOKEN')}
 
+    print('Getting map data...')
     get_response = requests.get(url, headers=headers).json()
     activity_map = get_response.get('map')
     if not activity_map:
-        print(get_response)
+        print(f'No map key, instead got {get_response}')
         return ()
     line = activity_map['polyline']
     decoded = decode(line)
     if not decoded:
-        print(activity_map)
+        print(f'No polyline key, instead got {activity_map}')
         return ()
     return decoded[-1]
 
@@ -39,7 +40,7 @@ def update_activity(id: int, data) -> str:
 
     # if access token is expired, get a new one
     if int(os.environ.get('EXPIRES_AT')) < time():
-        request_access_token()
+        _request_access_token()
     headers = {'Authorization': 'Bearer ' + os.environ.get('ACCESS_TOKEN')}
 
     put_response = requests.put(url, payload, headers=headers)
@@ -47,11 +48,11 @@ def update_activity(id: int, data) -> str:
     return str(put_response.status_code) + ' ' + put_response.reason
 
 
-def request_access_token():
+def _request_access_token():
     '''Requests and stores a new Strava API access token.'''
 
     url = base_url + 'oauth/token'
-    path = os.environ.get('DOTENV_PATH')
+    path = dotenv.find_dotenv()
     params = {
         'client_id': os.environ.get('CLIENT_ID'),
         'client_secret': os.environ.get('CLIENT_SECRET'),
@@ -63,4 +64,5 @@ def request_access_token():
     post_response = requests.post(url, params=params).json()
     dotenv.set_key(path, 'ACCESS_TOKEN', post_response['access_token'])
     dotenv.set_key(path, 'EXPIRES_AT', str(post_response['expires_at']))
+    print('Access key obtained')
     return

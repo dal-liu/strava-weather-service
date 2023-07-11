@@ -11,14 +11,11 @@ if not app.debug:
     with app.app_context():
         print('Creating ngrok tunnel...')
         public_url = ngrok.connect(5000).public_url
-        print(f'Callback URL: {public_url}')
+        print(f'Callback URL: {public_url}/webhook')
 
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/')
 def index():
-    if request.method == 'POST':
-        input_value = request.form['input_text']
-        print(input_value)
     return render_template('./index.html')
 
 
@@ -38,13 +35,11 @@ def webhook():
                 print('Activity did not contain map, did not update activity')
         else:
             print('Event was not a create, did not update activity')
-        return 'success', 200
-    
+        return 'success', 200    
     elif request.method == 'GET':
         challenge = {'hub.challenge': request.args.get('hub.challenge')}
         print(f'\nChallenge received, sending {challenge}...')
-        return json.dumps(challenge), 200
-    
+        return json.dumps(challenge), 200   
     else:
         return '', 200
 
