@@ -38,14 +38,14 @@ def get_weather_at_point(lat: int, lon: int, dt: str) -> tuple[str, str] | None:
 
     # extract relevant information from response
     condition, icon = _get_condition_and_icon(observation.get('weathercode')[time], observation.get('is_day')[time])
-    temperature = round(observation.get('temperature_2m')[time])
-    feels_like = round(observation.get('apparent_temperature')[time])
-    humidity = round(observation.get('relativehumidity_2m')[time])
-    wind_speed = round(observation.get('windspeed_10m')[time])
-    wind_direction = _get_wind_direction(observation.get('winddirection_10m')[time], wind_speed)
+    temperature     = round(observation.get('temperature_2m')[time])
+    feels_like      = round(observation.get('apparent_temperature')[time])
+    humidity        = round(observation.get('relativehumidity_2m')[time])
+    wind_speed      = round(observation.get('windspeed_10m')[time])
+    wind_direction  = _get_wind_direction(observation.get('winddirection_10m')[time], wind_speed)
 
     # return formatted string for activity description
-    return f'{condition}, {temperature}ºF, Feels like {feels_like}ºF, Humidity {humidity}%, Wind {wind_speed}mph {wind_direction}', icon
+    return icon, f'{condition}, {temperature}ºF, Feels like {feels_like}ºF, Humidity {humidity}%, Wind {wind_speed}mph {wind_direction}'
 
 
 def _get_condition_and_icon(code, is_day) -> tuple[str, str]:
