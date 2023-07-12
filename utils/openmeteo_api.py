@@ -1,5 +1,4 @@
 import requests
-from bisect import bisect_right
 from datetime import datetime
 from emoji import emojize
 
@@ -45,7 +44,7 @@ def get_weather_at_point(lat: int, lon: int, dt: str) -> tuple[str, str] | None:
     wind_direction  = _get_wind_direction(observation.get('winddirection_10m')[time], wind_speed)
 
     # return formatted string for activity description
-    return icon, f'{condition}, {temperature}ºF, Feels like {feels_like}ºF, Humidity {humidity}%, Wind {wind_speed}mph {wind_direction}'
+    return icon, f'{condition}, {temperature}ºF, Feels like {feels_like}ºF, Humidity {humidity}%, Wind {wind_speed}mph{wind_direction}'
 
 
 def _get_condition_and_icon(code, is_day) -> tuple[str, str]:
@@ -99,7 +98,7 @@ def _get_wind_direction(angle, speed) -> str:
     if speed == 0:
         return ''
     
-    direction = 'from '
+    direction = ' from '
     
     if 348.75 <= angle <= 360 or 0 <= angle < 11.25:
         direction += 'N'

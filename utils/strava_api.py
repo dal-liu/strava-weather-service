@@ -1,7 +1,6 @@
 import dotenv
 import os
 import requests
-from polyline import decode
 from time import time
 
 dotenv.load_dotenv()
@@ -20,16 +19,7 @@ def get_name_dt_and_latlng(id: int):
 
     print('Getting map data...')
     get_response = requests.get(url, headers=headers).json()
-    activity_map = get_response.get('map')
-    if not activity_map:
-        print(f'No map key, instead got {get_response}')
-        return None, None, ()
-    line = activity_map['polyline']
-    decoded = decode(line)
-    if not decoded:
-        print(f'No polyline key, instead got {activity_map}')
-        return None, None, ()
-    return get_response.get('name'), get_response.get('start_date'), decoded[0]
+    return get_response.get('name'), get_response.get('start_date'), get_response.get('start_latlng')
 
 
 def update_activity(id: int, description: str, title: str) -> str:
@@ -51,7 +41,7 @@ def update_activity(id: int, description: str, title: str) -> str:
     return str(put_response.status_code) + ' ' + put_response.reason
 
 
-def _request_access_token():
+def _request_access_token() -> None:
     '''Requests and stores a new Strava API access token.'''
 
     url = base_url + 'oauth/token'
