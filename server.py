@@ -1,8 +1,8 @@
 import json
+import utils.openmeteo_api as openmeteo_api
 import utils.strava_api as strava_api
 from flask import Flask, request, render_template
 from pyngrok import ngrok
-from utils.openmeteo_api import get_weather_at_point
 
 app = Flask(__name__)
 
@@ -27,20 +27,19 @@ def webhook():
             id = request.json['object_id']
             name, start_date, start_latlng = strava_api.get_name_dt_and_latlng(id)
             if len(start_latlng) == 2:
-                icon, description = get_weather_at_point(start_latlng[0], start_latlng[1], start_date)
-                title = icon + ' ' + name
+                icon, description = openmeteo_api.get_weather_at_point(start_latlng[0], start_latlng[1], start_date)
+                title = icon + name
                 print(f'Updating activity...')
-                response = strava_api.update_activity(id, description, title)
-                print(response)
+                strava_api.update_activity(id, description, title)
             else:
                 print('Activity did not contain map, did not update activity')
         else:
             print('Event was not a create, did not update activity')
-        return 'success', 200    
+        return '', 200
     elif request.method == 'GET':
         challenge = {'hub.challenge': request.args.get('hub.challenge')}
         print(f'\nChallenge received, sending {challenge}...')
-        return json.dumps(challenge), 200   
+        return json.dumps(challenge), 200
     else:
         return '', 200
 

@@ -37,8 +37,9 @@ def update_activity(id: int, description: str, title: str) -> str:
     headers = {'Authorization': 'Bearer ' + os.environ.get('ACCESS_TOKEN')}
 
     put_response = requests.put(url, payload, headers=headers)
-    # return status and reason
-    return str(put_response.status_code) + ' ' + put_response.reason
+    # print status and reason
+    print('Status: ' + str(put_response.status_code) + ' ' + put_response.reason)
+    return
 
 
 def _request_access_token() -> None:

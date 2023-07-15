@@ -1,6 +1,6 @@
+import emoji
 import requests
 from datetime import datetime
-from emoji import emojize
 
 
 def get_weather_at_point(lat: int, lon: int, dt: str) -> tuple[str, str] | None:
@@ -44,52 +44,58 @@ def get_weather_at_point(lat: int, lon: int, dt: str) -> tuple[str, str] | None:
     wind_direction  = _get_wind_direction(observation.get('winddirection_10m')[time], wind_speed)
 
     # return formatted string for activity description
-    return icon, f'{condition}, {temperature}ºF, Feels like {feels_like}ºF, Humidity {humidity}%, Wind {wind_speed}mph{wind_direction}'
+    return icon + ' ', f'{condition}, {temperature}ºF, Feels like {feels_like}ºF, Humidity {humidity}%, Wind {wind_speed}mph{wind_direction}'
 
 
 def _get_condition_and_icon(code, is_day) -> tuple[str, str]:
     '''If weather code is N/A, then returns an empty string.'''
     
+    condition, icon = '', ''
+
     if code == 0:
         if is_day:
-            return 'Sunny', emojize(':sun:')
+            condition, icon = 'Sunny', ':sun:'
         else:
-            return 'Clear', emojize(':crescent_moon:')
+            condition, icon = 'Clear', ':crescent_moon:'
     elif code == 1:
         if is_day:
-            return 'Mostly sunny', emojize(':sun_behind_small_cloud:')
+            condition, icon = 'Mostly sunny', ':sun_behind_small_cloud:'
         else:
-            return 'Mostly clear', emojize(':crescent_moon:')
+            condition, icon = 'Mostly clear', ':crescent_moon:'
     elif code == 2:
+        condition = 'Partly cloudy'
         if is_day:
-            return 'Partly cloudy', emojize(':sun_behind_cloud:')
+            icon = ':sun_behind_cloud:'
         else:
-            return 'Partly cloudy', emojize(':cloud:')
+            icon = ':cloud:'
     elif code == 3:
-        if is_day:
-            return 'Cloudy', emojize(':cloud:')
-        else:
-            return 'Cloudy', emojize(':cloud:')
+        condition, icon = 'Cloudy', ':cloud:'
     elif code in (45, 48):
-        return 'Fog', emojize(':fog:')
+        condition, icon = 'Fog', ':fog:'
     elif code in (51, 53, 55):
-        return 'Drizzle', emojize(':cloud_with_rain:')
+        condition, icon = 'Drizzle', ':cloud_with_rain:'
     elif code in (56, 57):
-        return 'Freezing drizzle', emojize(':cloud_with_rain:')
+        condition, icon = 'Freezing drizzle', ':cloud_with_rain:'
     elif code in (61, 63, 65):
-        return 'Rain', emojize(':cloud_with_rain:')
+        condition, icon = 'Rain', ':cloud_with_rain:'
     elif code in (66, 67):
-        return 'Freezing rain', emojize(':cloud_with_rain:')
+        condition, icon = 'Freezing rain', ':cloud_with_rain:'
     elif code in (71, 73, 75, 77):
-        return 'Snow', emojize(':cloud_with_snow:')
+        condition, icon = 'Snow', ':cloud_with_snow:'
     elif code in (80, 81, 82):
-        return 'Rain showers', emojize(':sun_behind_rain_cloud:')
+        condition = 'Rain showers'
+        if is_day:
+            icon = ':sun_behind_rain_cloud:'
+        else:
+            icon = ':cloud_with_rain:'
     elif code in (85, 86):
-        return 'Snow showers', emojize(':cloud_with_snow:')
-    elif code in (95, 96, 99):
-        return 'Thunderstorms', emojize(':cloud_with_lightning_and_rain:')
+        condition, icon = 'Snow showers', ':cloud_with_snow:'
+    elif code == 95:
+        condition, icon = 'Scattered thunderstorms', ':cloud_with_lightning_and_rain:'
+    elif code in (96, 99):
+        condition, icon = 'Thunderstorms', ':cloud_with_lightning_and_rain:'
     
-    return '', ''
+    return condition, emoji.emojize(icon) if icon else ''
 
 
 def _get_wind_direction(angle, speed) -> str:
