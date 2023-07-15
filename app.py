@@ -22,7 +22,7 @@ def index():
 @app.route('/webhook', methods=['POST', 'GET'])
 def webhook():
     if request.method == 'POST':
-        print(f'\nEvent update received {request.json}')
+        print(f'Event update received {request.json}')
         if request.json['aspect_type'] == 'create':
             id = request.json['object_id']
             name, start_date, start_latlng = strava_api.get_name_dt_and_latlng(id)
@@ -38,7 +38,7 @@ def webhook():
         return '', 200
     elif request.method == 'GET':
         challenge = {'hub.challenge': request.args.get('hub.challenge')}
-        print(f'\nChallenge received, sending {challenge}...')
+        print(f'Challenge received, sending {challenge}...')
         return json.dumps(challenge), 200
     else:
         return '', 200
