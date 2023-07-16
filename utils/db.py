@@ -2,9 +2,6 @@ import os
 import requests
 from pymongo.mongo_client import MongoClient
 from time import time
-from dotenv import load_dotenv
-
-load_dotenv()
 
 athlete = {'athleteID': 1}
 client = MongoClient(os.environ.get('MONGODB_URI'))
